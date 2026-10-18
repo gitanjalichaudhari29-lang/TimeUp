@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>TimeBuddy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>TimeBuddy</h1>
+        <p>Your Personal Time and Study Assistant</p>
+    </header>
+
+    <main>
+
+        <section class="card">
+            <h2>Daily Reminders</h2>
+
+            <label for="task">Enter Task</label>
+            <input type="text" id="task" placeholder="Enter your task">
+
+            <label for="time">Enter Time</label>
+            <input type="time" id="time">
+
+            <button onclick="addTask()">Add Reminder</button>
+
+            <ul id="taskList"></ul>
+        </section>
+
+        <section class="card">
+            <h2>My Notes</h2>
+
+            <label for="noteTitle">Enter Note Title</label>
+            <input type="text" id="noteTitle" placeholder="Note title">
+
+            <label for="noteText">Write Your Notes</label>
+            <textarea id="noteText" placeholder="Write your notes here"></textarea>
+
+            <button onclick="saveNote()">Save Note</button>
+
+            <ul id="noteList"></ul>
+        </section>
+
+        <section class="card">
+            <h2>Important Documents</h2>
+
+            <label for="file">Choose a Document</label>
+            <input type="file" id="file">
+
+            <button onclick="saveDocument()">Save Document</button>
+
+            <ul id="documentList"></ul>
+        </section>
+
+    </main>
+
+    <footer>
+        Stay Organized, Stay on Time!
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
