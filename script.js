@@ -12,7 +12,11 @@ function addTask() {
         return;
     }
 
-    tasks.push({ task: task, time: time });
+    tasks.push({
+        task: task,
+        time: time,
+        lastNotified: ""
+    });
 
     localStorage.setItem("tasks", JSON.stringify(tasks));
 
@@ -97,6 +101,7 @@ let request = indexedDB.open("TimeBuddy", 1);
 
 request.onupgradeneeded = function(event) {
     database = event.target.result;
+
     database.createObjectStore("documents", {
         keyPath: "id",
         autoIncrement: true
@@ -106,6 +111,10 @@ request.onupgradeneeded = function(event) {
 request.onsuccess = function(event) {
     database = event.target.result;
     showDocuments();
+};
+
+request.onerror = function() {
+    alert("Unable to open document storage.");
 };
 
 // Save a document
@@ -188,8 +197,68 @@ function showDocuments() {
             list.appendChild(li);
         });
     };
+};
+
+// Enable browser notifications
+function enableNotifications() {
+    if (!("Notification" in window)) {
+        alert("Your browser does not support notifications.");
+        return;
+    }
+
+    Notification.requestPermission().then(function(permission) {
+        if (permission === "granted") {
+            alert("Notifications enabled successfully!");
+        } else {
+            alert("Please allow notifications in your browser.");
+        }
+    });
+}
+
+// Check reminder times
+function checkReminders() {
+    if (!("Notification" in window)) {
+        return;
+    }
+
+    if (Notification.permission !== "granted") {
+        return;
+    }
+
+    let now = new Date();
+
+    let currentTime =
+        String(now.getHours()).padStart(2, "0") + ":" +
+        String(now.getMinutes()).padStart(2, "0");
+
+    let today =
+        now.getFullYear() + "-" +
+        String(now.getMonth() + 1).padStart(2, "0") + "-" +
+        String(now.getDate()).padStart(2, "0");
+
+    tasks.forEach(function(item) {
+        if (!item.lastNotified) {
+            item.lastNotified = "";
+        }
+
+        if (
+            item.time === currentTime &&
+            item.lastNotified !== today
+        ) {
+            new Notification("TimeBuddy Reminder", {
+                body: "It's time to: " + item.task
+            });
+
+            item.lastNotified = today;
+        }
+    });
+
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 // Show saved reminders and notes
 showTasks();
 showNotes();
+
+// Check reminders every 10 seconds
+setInterval(checkReminders, 10000);
